@@ -2,18 +2,16 @@ import React from 'react';
 import { Grid, Card, CardContent, Typography, CardActionArea } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const p_descriptions = [
-    'Fulfillment Fee Refund',
-    'FBA Inventory Reimbursement - Customer Return',
-    'FBA Inventory Reimbursement - Customer Service Issue',
-    'FBA Inventory Reimbursement - Damaged:Warehouse',
-    'FBA Removal Order: Return Fee',
-    'FBA Inbound Pickup Service',
-    'Cost of Advertising'
-];
-
 export default function TransactionSummaries({ data }) {
   const navigate = useNavigate();
+
+  // Extract unique descriptions from data where Order ID is null
+  const p_descriptions = Array.from(
+    new Set(data
+      .filter(item => item.Order_ID === null) 
+      .map(item => item.P_Description)
+    )
+  );
 
   const handleCardClick = (description) => {
     navigate(`/transaction/${encodeURIComponent(description)}`);
