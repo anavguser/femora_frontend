@@ -11,7 +11,32 @@ export default function TransactionDetails({ data }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filteredData = data ? data.filter(item => item.P_Description === description) : [];
+  // Function to filter data based on description
+  const filterData = (data, description) => {
+    if (description === 'Removal Order ID Filter') {
+      return filterAndRemoveOrders(data);
+    } else {
+      return data ? data.filter(item => item.P_Description === description) : [];
+    }
+  };
+
+  // Function to filter orders with Order ID of length 10
+  const filterAndRemoveOrders = (resultArray) => {
+    if (!Array.isArray(resultArray)) {
+      console.error('Data is not an array:', resultArray);
+      return [];
+    }
+
+    // Filter rows where 'Order ID' has length 10
+    const removalArray = resultArray.filter(row => {
+      const orderId = row['Order ID'];
+      return typeof orderId === 'string' && orderId.length === 10;
+    });
+
+    return removalArray;
+  };
+
+  const filteredData = filterData(data, description);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -23,7 +48,7 @@ export default function TransactionDetails({ data }) {
   };
 
   // Get all unique headers from the data
-  const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
+  const headers = filteredData && filteredData.length > 0 ? Object.keys(filteredData[0]) : [];
 
   return (
     <div>

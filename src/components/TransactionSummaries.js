@@ -9,7 +9,8 @@ const p_descriptions = [
     'FBA Inventory Reimbursement - Damaged:Warehouse',
     'FBA Removal Order: Return Fee',
     'FBA Inbound Pickup Service',
-    'Cost of Advertising'
+    'Cost of Advertising',
+    'Removal Order ID Filter' // New description for the new card
 ];
 
 export default function TransactionSummaries({ data }) {
@@ -20,7 +21,37 @@ export default function TransactionSummaries({ data }) {
   };
 
   const getCount = (description) => {
+    if (description === 'Removal Order ID Filter') {
+      const removalArray = filterAndRemoveOrders(data);
+      console.log('Filtered Removal Array:', removalArray);
+      return removalArray.length;
+    }
     return data.filter(item => item.P_Description === description).length;
+  };
+
+  const filterAndRemoveOrders = (resultArray) => {
+    if (!Array.isArray(resultArray)) {
+      console.error('Data is not an array:', resultArray);
+      return [];
+    }
+
+    // Filter rows where 'Order ID' has length 10
+    const removalArray = resultArray.filter(row => {
+      const orderId = row['Order ID'];
+      return typeof orderId === 'string' && orderId.length === 10;
+    });
+
+    // Count the number of unique Order IDs with length 10
+    const orderIds = removalArray.map(row => row['Order ID']);
+    const uniqueOrderIdCount = new Set(orderIds).size;
+
+    // Print the count of Order IDs
+    console.log(`Removal Order IDs: ${uniqueOrderIdCount}\n`);
+
+    // Display the new array
+    console.log(removalArray, "\n");
+
+    return removalArray;
   };
 
   return (
