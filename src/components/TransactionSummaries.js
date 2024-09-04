@@ -13,6 +13,8 @@ export default function TransactionSummaries({ data }) {
     )
   );
 
+console.log(p_descriptions)
+
   const handleCardClick = (description) => {
     navigate(`/transaction/${encodeURIComponent(description)}`);
   };
